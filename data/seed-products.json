@@ -1,0 +1,52 @@
+[
+  {
+    "name": "demo",
+    "sku": "SKU-EL-TEST-5576",
+    "slug": "demo-3211",
+    "categoryName": "Electronics & Gadgets",
+    "subcategory": "Smart Sensors & IoT",
+    "brand": "GROVE Prime",
+    "description": "Solar-powered IoT multi-depth soil moisture, EC salinity, and ambient temperature telemetry probe with Bluetooth 5.0 and 4G GSM cloud uplink for real-time agronomy analytics.",
+    "price": 6899,
+    "mrp": 8500,
+    "discount": 19,
+    "stock": 25,
+    "rating": 4.5,
+    "reviewCount": 10,
+    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80"
+    ],
+    "specs": {
+      "material": "Weatherproof Anodized Stainless Steel & UV-Stabilized ABS",
+      "pipeSize": "300 mm Probe Depth",
+      "flowRate": "RS485 Modbus RTU / 4G GSM"
+    },
+    "highlights": []
+  },
+  {
+    "name": "Smart Precision Agri Telemetry Soil Moisture & Temp Sensor Hub",
+    "sku": "SKU-EL-TEST-9716",
+    "slug": "smart-precision-agri-telemetry-soil-moisture-temp-sensor-hub-7242",
+    "categoryName": "Electronics & Gadgets",
+    "subcategory": "Smart Sensors & IoT",
+    "brand": "GROVE Prime",
+    "description": "Solar-powered IoT multi-depth soil moisture, EC salinity, and ambient temperature telemetry probe with Bluetooth 5.0 and 4G GSM cloud uplink for real-time agronomy analytics.",
+    "price": 6899,
+    "mrp": 8500,
+    "discount": 19,
+    "stock": 25,
+    "rating": 4.5,
+    "reviewCount": 10,
+    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80"
+    ],
+    "specs": {
+      "material": "Weatherproof Anodized Stainless Steel & UV-Stabilized ABS",
+      "pipeSize": "300 mm Probe Depth",
+      "flowRate": "RS485 Modbus RTU / 4G GSM"
+    },
+    "highlights": []
+  }
+]
