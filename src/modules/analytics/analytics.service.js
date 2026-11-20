@@ -19,11 +19,11 @@ export class AnalyticsService {
     ]);
     const productCountByDealer = new Map(productCounts.map((row) => [String(row._id), row.count]));
 
-    const totalOrdersCount = orders.length;
     const completedOrders = orders.filter((o) => o.orderStatus !== 'Cancelled');
-    const grossGMV = completedOrders.reduce((acc, curr) => acc + (curr.pricing?.total || 0), 0);
-    const avgOrderValue = totalOrdersCount > 0 ? Math.round(grossGMV / totalOrdersCount) : 0;
-    const commissionEarned = dealerOrders.reduce((sum, order) => sum + Number(order.commissionAmount || 0), 0);
+    const grossGMV = completedOrders.reduce((acc, curr) => acc + Number(curr.pricing?.total || 0), 0);
+    const avgOrderValue = completedOrders.length > 0 ? Math.round(grossGMV / completedOrders.length) : 0;
+    const activeDealerOrders = dealerOrders.filter((order) => order.orderStatus !== 'Cancelled');
+    const commissionEarned = activeDealerOrders.reduce((sum, order) => sum + Number(order.commissionAmount || 0), 0);
 
     const buildTrend = (startDates, labelFor) => startDates.map((date) => {
       const key = labelFor(date);
@@ -32,34 +32,55 @@ export class AnalyticsService {
       return { period: key, revenue, displayRev: `₹${revenue.toLocaleString('en-IN')}`, orders: matching.length };
     });
     const now = new Date();
-    const dailyTrend = buildTrend(Array.from({ length: 7 }, (_, i) => new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6 + i)), (d) => d.toISOString().slice(0, 10));
-    const weeklyTrend = buildTrend(Array.from({ length: 8 }, (_, i) => new Date(now.getFullYear(), now.getMonth(), now.getDate() - (7 - i) * 7)), (d) => {
-      const jan1 = new Date(d.getFullYear(), 0, 1);
-      return `${d.getFullYear()} W${Math.ceil((((d - jan1) / 86400000) + jan1.getDay() + 1) / 7)}`;
-    });
-    const monthlyTrend = buildTrend(Array.from({ length: 12 }, (_, i) => new Date(now.getFullYear(), now.getMonth() - 11 + i, 1)), (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+    const utcToday = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const dayMs = 24 * 60 * 60 * 1000;
+    const isoWeekLabel = (value) => {
+      const date = new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate()));
+      date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+      const week = Math.ceil((((date - yearStart) / dayMs) + 1) / 7);
+      return `${date.getUTCFullYear()} W${String(week).padStart(2, '0')}`;
+    };
+    const dailyTrend = buildTrend(
+      Array.from({ length: 7 }, (_, i) => new Date(utcToday - (6 - i) * dayMs)),
+      (date) => date.toISOString().slice(0, 10)
+    );
+    const weeklyTrend = buildTrend(
+      Array.from({ length: 8 }, (_, i) => new Date(utcToday - (7 - i) * 7 * dayMs)),
+      isoWeekLabel
+    );
+    const monthlyTrend = buildTrend(
+      Array.from({ length: 12 }, (_, i) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11 + i, 1))),
+      (date) => `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`
+    );
     const statusCounts = new Map();
     for (const order of orders) statusCounts.set(order.orderStatus || 'Unknown', (statusCounts.get(order.orderStatus || 'Unknown') || 0) + 1);
     const totalProducts = productCounts.reduce((sum, row) => sum + row.count, 0);
 
     // Category distribution
-    const categoryVolumeMap = {};
+    const categoryVolumeMap = new Map();
     for (const order of completedOrders) {
+      const categoriesInOrder = new Set();
       for (const item of order.items || []) {
         const cat = item.category || 'General';
-        categoryVolumeMap[cat] = (categoryVolumeMap[cat] || 0) + (item.subtotal || 0);
+        const row = categoryVolumeMap.get(cat) || { revenue: 0, orders: new Set() };
+        row.revenue += Number(item.subtotal ?? (Number(item.price || 0) * Number(item.quantity || 0)));
+        categoriesInOrder.add(cat);
+        categoryVolumeMap.set(cat, row);
       }
+      for (const cat of categoriesInOrder) categoryVolumeMap.get(cat).orders.add(String(order._id));
     }
 
-    const categoryDistribution = Object.keys(categoryVolumeMap).map((cat) => ({
+    const categoryDistribution = [...categoryVolumeMap.entries()].map(([cat, row]) => ({
       category: cat,
-      revenue: categoryVolumeMap[cat]
+      revenue: row.revenue,
+      orders: row.orders.size
     }));
 
     return {
       kpis: {
         grossGMV,
-        totalOrders: totalOrdersCount,
+        totalOrders: completedOrders.length,
         avgOrderValue,
         commissionEarned,
         activeDealers: dealers.length,
@@ -81,7 +102,7 @@ export class AnalyticsService {
         category: p.categoryName
       })),
       dealerPerformance: dealers.map((dealer) => {
-        const dealerOrdersList = dealerOrders.filter((order) => String(order.dealer) === String(dealer._id));
+        const dealerOrdersList = activeDealerOrders.filter((order) => String(order.dealer) === String(dealer._id));
         const revenue = dealerOrdersList.reduce((sum, order) => sum + Number(order.subtotal || 0), 0);
         const fulfilled = dealerOrdersList.filter((order) => order.orderStatus === 'Delivered').length;
         return {
