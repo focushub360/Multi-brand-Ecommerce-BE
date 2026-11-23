@@ -4,7 +4,11 @@ import { validate } from '../../middlewares/validate.middleware.js';
 import { authenticate } from '../../middlewares/auth.middleware.js';
 import { authorize, requireApprovedDealer } from '../../middlewares/role.middleware.js';
 import { ROLES } from '../../constants/roles.js';
+<<<<<<< HEAD
 import { dealerApplicationSchema, dealerStoreSettingsSchema, dealerBankDetailsSchema } from './dealer.validation.js';
+=======
+import { dealerApplicationSchema, dealerStoreSettingsSchema } from './dealer.validation.js';
+>>>>>>> origin/Dhanesh
 
 const router = Router();
 
@@ -19,6 +23,7 @@ router.post(
 );
 
 /**
+<<<<<<< HEAD
  * Submit Dealer Settlement Bank Details During Onboarding
  * PUT /api/v1/dealers/onboarding/bank-details
  */
@@ -31,6 +36,8 @@ router.put(
 );
 
 /**
+=======
+>>>>>>> origin/Dhanesh
  * Get Authenticated Dealer Profile
  * GET /api/v1/dealers/profile
  */

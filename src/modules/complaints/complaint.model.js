@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
+<<<<<<< HEAD
 export const DEALER_TICKET_CATEGORIES = [
   'Account & Verification',
   'Product & Catalog',
@@ -77,10 +78,13 @@ const attachmentSchema = new Schema(
   { _id: false }
 );
 
+=======
+>>>>>>> origin/Dhanesh
 const messageSchema = new Schema(
   {
     sender: {
       type: Schema.Types.ObjectId,
+<<<<<<< HEAD
       required: true
     },
     senderModel: {
@@ -88,6 +92,11 @@ const messageSchema = new Schema(
       enum: ['User', 'Dealer'],
       default: 'User'
     },
+=======
+      ref: 'User',
+      required: true
+    },
+>>>>>>> origin/Dhanesh
     senderName: { type: String, required: true },
     senderRole: {
       type: String,
@@ -95,7 +104,10 @@ const messageSchema = new Schema(
       required: true
     },
     text: { type: String, required: true },
+<<<<<<< HEAD
     attachments: [attachmentSchema],
+=======
+>>>>>>> origin/Dhanesh
     timestamp: { type: Date, default: Date.now }
   },
   { _id: true }
@@ -105,6 +117,10 @@ const internalNoteSchema = new Schema(
   {
     author: {
       type: Schema.Types.ObjectId,
+<<<<<<< HEAD
+=======
+      ref: 'User',
+>>>>>>> origin/Dhanesh
       required: true
     },
     note: { type: String, required: true },
@@ -113,6 +129,7 @@ const internalNoteSchema = new Schema(
   { _id: true }
 );
 
+<<<<<<< HEAD
 const statusHistorySchema = new Schema(
   {
     status: {
@@ -144,6 +161,8 @@ const statusHistorySchema = new Schema(
   { _id: false }
 );
 
+=======
+>>>>>>> origin/Dhanesh
 const complaintSchema = new Schema(
   {
     ticketId: {
@@ -160,6 +179,7 @@ const complaintSchema = new Schema(
     },
     requester: {
       type: Schema.Types.ObjectId,
+<<<<<<< HEAD
       required: true,
       index: true
     },
@@ -168,6 +188,12 @@ const complaintSchema = new Schema(
       enum: ['User', 'Dealer'],
       default: 'User'
     },
+=======
+      ref: 'User',
+      required: true,
+      index: true
+    },
+>>>>>>> origin/Dhanesh
     requesterName: { type: String, required: true },
     requesterEmail: { type: String, required: true },
     requesterRole: { type: String, required: true },
@@ -184,9 +210,14 @@ const complaintSchema = new Schema(
     },
     category: {
       type: String,
+<<<<<<< HEAD
       enum: ALL_TICKET_CATEGORIES,
       required: true,
       default: 'Other / General'
+=======
+      enum: ['Logistics & Courier', 'Billing & Tax', 'Product Defect', 'Account & KYC', 'General'],
+      required: true
+>>>>>>> origin/Dhanesh
     },
     priority: {
       type: String,
@@ -195,6 +226,7 @@ const complaintSchema = new Schema(
     },
     status: {
       type: String,
+<<<<<<< HEAD
       enum: TICKET_STATUSES,
       default: 'Open',
       index: true
@@ -227,6 +259,14 @@ const complaintSchema = new Schema(
       itemsCount: { type: Number, default: 0 },
       placedAt: { type: Date }
     }
+=======
+      enum: ['Open', 'In Progress', 'Escalated', 'Resolved', 'Closed'],
+      default: 'Open',
+      index: true
+    },
+    messages: [messageSchema],
+    internalNotes: [internalNoteSchema]
+>>>>>>> origin/Dhanesh
   },
   {
     timestamps: true
@@ -234,3 +274,7 @@ const complaintSchema = new Schema(
 );
 
 export const Complaint = mongoose.model('Complaint', complaintSchema);
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/Dhanesh

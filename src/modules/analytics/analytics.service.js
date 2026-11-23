@@ -127,6 +127,7 @@ export class AnalyticsService {
       ].filter(Boolean)
     }).lean();
 
+<<<<<<< HEAD
     const dId = dealer?._id ? String(dealer._id) : (String(dealerId).match(/^[0-9a-fA-F]{24}$/) ? String(dealerId) : null);
     const dCode = dealer?.dealerCode || (!dId ? String(dealerId) : null);
 
@@ -136,6 +137,24 @@ export class AnalyticsService {
 
     const orderQuery = conditions.length > 1 ? { $or: conditions } : conditions[0] || {};
     const prodQuery = conditions.length > 1 ? { $or: conditions } : conditions[0] || {};
+=======
+    const dId = dealer?._id || dealerId;
+    const dCode = dealer?.dealerCode;
+
+    const orderQuery = {
+      $or: [
+        { dealer: dId },
+        dCode ? { dealerCode: dCode } : null
+      ].filter(Boolean)
+    };
+
+    const prodQuery = {
+      $or: [
+        { dealer: dId },
+        dCode ? { dealerCode: dCode } : null
+      ].filter(Boolean)
+    };
+>>>>>>> origin/Dhanesh
 
     const [subOrders, products] = await Promise.all([
       DealerOrder.find(orderQuery).sort({ createdAt: -1 }).lean(),
@@ -224,9 +243,13 @@ export class AnalyticsService {
    * Export Dealer Orders Ledger to RFC-4180 Compliant CSV
    */
   static async exportDealerOrdersCSV(dealerId) {
+<<<<<<< HEAD
     const isHex = String(dealerId).match(/^[0-9a-fA-F]{24}$/);
     const query = isHex ? { $or: [{ dealer: dealerId }, { dealerCode: dealerId }] } : { dealerCode: String(dealerId) };
     const subOrders = await DealerOrder.find(query).sort({ createdAt: -1 }).lean();
+=======
+    const subOrders = await DealerOrder.find({ dealer: dealerId }).sort({ createdAt: -1 }).lean();
+>>>>>>> origin/Dhanesh
 
     const headers = [
       'Suborder ID',

@@ -1,4 +1,5 @@
 import { Complaint } from './complaint.model.js';
+<<<<<<< HEAD
 import { DealerNotification } from './dealerNotification.model.js';
 import { CustomerNotification } from './customerNotification.model.js';
 import { Dealer } from '../dealers/dealer.model.js';
@@ -14,6 +15,12 @@ import {
   sendTicketReplyNotification,
   sendTicketStatusNotification
 } from '../../utils/sendEmail.js';
+=======
+import { Dealer } from '../dealers/dealer.model.js';
+import { ROLES } from '../../constants/roles.js';
+import { ApiError } from '../../utils/ApiError.js';
+import { AdminService } from '../admin/service/admin.service.js';
+>>>>>>> origin/Dhanesh
 
 export class ComplaintService {
   /**
@@ -21,6 +28,7 @@ export class ComplaintService {
    */
   static async createTicket(user, dealerIdentity, data) {
     const isDealer = user.role === ROLES.DEALER;
+<<<<<<< HEAD
     const ticketId = `TCK-${Date.now().toString().slice(-4)}${Math.floor(100 + Math.random() * 900)}`;
 
     let concernedDealerId = null;
@@ -110,10 +118,29 @@ export class ComplaintService {
       ? (dealerSnapshot?.email || user.email)
       : (customerSnapshot?.email || user.email);
 
+=======
+    const ticketId = `TCK-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    let concernedDealerId = null;
+    let concernedDealerName = '';
+
+    if (isDealer && dealerIdentity) {
+      concernedDealerId = dealerIdentity.id;
+      concernedDealerName = dealerIdentity.businessName;
+    } else if (data.concernedDealer) {
+      const dealer = await Dealer.findById(data.concernedDealer);
+      if (dealer) {
+        concernedDealerId = dealer._id;
+        concernedDealerName = dealer.businessName;
+      }
+    }
+
+>>>>>>> origin/Dhanesh
     const complaint = new Complaint({
       ticketId,
       ticketType: isDealer ? 'dealer' : 'customer',
       requester: user.id,
+<<<<<<< HEAD
       requesterModel: isDealer ? 'Dealer' : 'User',
       requesterName,
       requesterEmail,
@@ -146,12 +173,31 @@ export class ComplaintService {
           changedByName: requesterName,
           changedByRole: isDealer ? 'dealer' : 'customer',
           reason: 'Initial ticket submission',
+=======
+      requesterName: isDealer && dealerIdentity ? dealerIdentity.businessName : user.name,
+      requesterEmail: user.email,
+      requesterRole: isDealer ? 'Dealer' : 'Customer',
+      concernedDealer: concernedDealerId,
+      concernedDealerName,
+      orderNumber: data.orderNumber || '',
+      subject: data.subject.trim(),
+      category: data.category,
+      priority: data.priority || 'Medium',
+      status: 'Open',
+      messages: [
+        {
+          sender: user.id,
+          senderName: isDealer && dealerIdentity ? dealerIdentity.businessName : user.name,
+          senderRole: isDealer ? 'dealer' : 'customer',
+          text: data.message.trim(),
+>>>>>>> origin/Dhanesh
           timestamp: new Date()
         }
       ]
     });
 
     await complaint.save();
+<<<<<<< HEAD
 
     // 1. Notify Admin In-App
     NotificationService.createNotification({
@@ -177,21 +223,32 @@ export class ComplaintService {
       description: descriptionText
     }).catch((err) => console.error('Admin ticket created email error:', err.message));
 
+=======
+>>>>>>> origin/Dhanesh
     return complaint;
   }
 
   /**
    * Post Reply Message to Ticket
    */
+<<<<<<< HEAD
   static async replyToTicket(ticketId, user, dealerIdentity, text, attachments = []) {
+=======
+  static async replyToTicket(ticketId, user, dealerIdentity, text) {
+>>>>>>> origin/Dhanesh
     const ticket = await Complaint.findOne({
       $or: [{ _id: ticketId.match(/^[0-9a-fA-F]{24}$/) ? ticketId : null }, { ticketId }]
     });
 
     if (!ticket) throw ApiError.notFound('Support ticket not found.');
 
+<<<<<<< HEAD
     const isAdmin = user.role === ROLES.SUPER_ADMIN;
     const isDealer = user.role === ROLES.DEALER;
+=======
+    // Verify participant permission (Requester, Admin, or Concerned Dealer)
+    const isAdmin = user.role === ROLES.SUPER_ADMIN;
+>>>>>>> origin/Dhanesh
     const isRequester = ticket.requester.toString() === user.id.toString();
     const isConcernedDealer = dealerIdentity && ticket.concernedDealer?.toString() === dealerIdentity.id.toString();
 
@@ -199,6 +256,7 @@ export class ComplaintService {
       throw ApiError.forbidden('You do not have permission to view or participate in this ticket.');
     }
 
+<<<<<<< HEAD
     const roleString = isAdmin ? 'admin' : isDealer ? 'dealer' : 'customer';
     const senderName = isAdmin
       ? 'GROVE Platform Operations'
@@ -410,23 +468,51 @@ export class ComplaintService {
       isRecipientAdmin: true
     }).catch((err) => console.error('Admin email error:', err.message));
 
+=======
+    const roleString = isAdmin ? 'admin' : user.role === ROLES.DEALER ? 'dealer' : 'customer';
+    const senderName = isAdmin ? 'GROVE Platform Operations' : (user.role === ROLES.DEALER && dealerIdentity ? dealerIdentity.businessName : user.name);
+
+    ticket.messages.push({
+      sender: user.id,
+      senderName,
+      senderRole: roleString,
+      text: text.trim(),
+      timestamp: new Date()
+    });
+
+    if (isAdmin && ticket.status === 'Open') {
+      ticket.status = 'In Progress';
+    }
+
+    await ticket.save();
+>>>>>>> origin/Dhanesh
     return ticket;
   }
 
   /**
    * Super Admin Update Ticket Status & Add Internal Note
    */
+<<<<<<< HEAD
   static async updateTicketStatus(ticketId, adminUser, status, note = '', reason = '') {
+=======
+  static async updateTicketStatus(ticketId, adminUser, status, note = '', priority) {
+>>>>>>> origin/Dhanesh
     const ticket = await Complaint.findOne({
       $or: [{ _id: ticketId.match(/^[0-9a-fA-F]{24}$/) ? ticketId : null }, { ticketId }]
     });
 
     if (!ticket) throw ApiError.notFound('Ticket not found.');
 
+<<<<<<< HEAD
     const oldStatus = ticket.status;
     ticket.status = status;
 
     if (note && note.trim()) {
+=======
+    ticket.status = status;
+    if (priority) ticket.priority = priority;
+    if (note) {
+>>>>>>> origin/Dhanesh
       ticket.internalNotes.push({
         author: adminUser.id,
         note: note.trim(),
@@ -434,6 +520,7 @@ export class ComplaintService {
       });
     }
 
+<<<<<<< HEAD
     const statusNote = (reason || note || `Status updated to ${status}`).trim();
     ticket.statusHistory.push({
       status,
@@ -531,11 +618,25 @@ export class ComplaintService {
    * Super Admin Post Reply / Request Info with optional status update & attachments
    */
   static async addAdminReply(ticketId, adminUser, text, internalNote = false, status = null, attachments = []) {
+=======
+    await ticket.save();
+    await AdminService.recordAuditLog({
+      action: 'COMPLAINT_UPDATED', actor: adminUser.id, actorRole: adminUser.role,
+      targetEntity: 'Complaint', targetId: ticket.ticketId,
+      details: `Complaint status set to ${ticket.status}${priority ? ` and priority set to ${priority}` : ''}.`,
+      ipAddress: adminUser.ipAddress || '', userAgent: adminUser.userAgent || ''
+    });
+    return ticket;
+  }
+
+  static async addAdminReply(ticketId, adminUser, text, internalNote = false) {
+>>>>>>> origin/Dhanesh
     const ticket = await Complaint.findOne({
       $or: [{ _id: ticketId.match(/^[0-9a-fA-F]{24}$/) ? ticketId : null }, { ticketId }]
     });
     if (!ticket) throw ApiError.notFound('Support ticket not found.');
 
+<<<<<<< HEAD
     const formattedAttachments = Array.isArray(attachments) ? attachments : [];
 
     if (internalNote) {
@@ -669,6 +770,24 @@ export class ComplaintService {
       userAgent: adminUser.userAgent || ''
     });
 
+=======
+    if (internalNote) {
+      ticket.internalNotes.push({ author: adminUser.id, note: text.trim(), timestamp: new Date() });
+    } else {
+      ticket.messages.push({
+        sender: adminUser.id, senderName: adminUser.name || 'GROVE Platform Operations',
+        senderRole: 'admin', text: text.trim(), timestamp: new Date()
+      });
+      if (ticket.status === 'Open') ticket.status = 'In Progress';
+    }
+    await ticket.save();
+    await AdminService.recordAuditLog({
+      action: internalNote ? 'COMPLAINT_INTERNAL_NOTE_ADDED' : 'COMPLAINT_REPLIED',
+      actor: adminUser.id, actorRole: adminUser.role, targetEntity: 'Complaint', targetId: ticket.ticketId,
+      details: internalNote ? 'Added an internal complaint note.' : 'Sent a complaint response.',
+      ipAddress: adminUser.ipAddress || '', userAgent: adminUser.userAgent || ''
+    });
+>>>>>>> origin/Dhanesh
     return ticket;
   }
 
@@ -676,6 +795,7 @@ export class ComplaintService {
    * Get Current User/Dealer Tickets
    */
   static async getMyTickets(userId, dealerId = null) {
+<<<<<<< HEAD
     const conditions = [{ requester: userId }];
     if (dealerId) {
       conditions.push({ concernedDealer: dealerId });
@@ -720,16 +840,46 @@ export class ComplaintService {
 
     const [tickets, total] = await Promise.all([
       Complaint.find(query).sort({ updatedAt: -1 }).skip(skip).limit(parsedLimit).lean(),
+=======
+    const query = { $or: [{ requester: userId }] };
+    if (dealerId) {
+      query.$or.push({ concernedDealer: dealerId });
+    }
+
+    return await Complaint.find(query).sort({ updatedAt: -1 }).lean();
+  }
+
+  /**
+   * Super Admin Get All Tickets
+   */
+  static async getAllTickets({ status = '', priority = '', type = '', page = 1, limit = 20 }) {
+    const query = {};
+    if (status) query.status = status;
+    if (priority) query.priority = priority;
+    if (type) query.ticketType = type;
+
+    const skip = (page - 1) * limit;
+
+    const [tickets, total] = await Promise.all([
+      Complaint.find(query).sort({ updatedAt: -1 }).skip(skip).limit(limit).lean(),
+>>>>>>> origin/Dhanesh
       Complaint.countDocuments(query)
     ]);
 
     return {
       tickets,
       pagination: {
+<<<<<<< HEAD
         page: parsedPage,
         limit: parsedLimit,
         total,
         pages: Math.ceil(total / parsedLimit)
+=======
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit)
+>>>>>>> origin/Dhanesh
       }
     };
   }
@@ -744,12 +894,19 @@ export class ComplaintService {
 
     if (!ticket) throw ApiError.notFound('Ticket not found.');
 
+<<<<<<< HEAD
     const isAdmin = user.role === ROLES.SUPER_ADMIN;
     const isRequester = ticket.requester.toString() === user.id.toString();
     const isConcernedDealer =
       dealerIdentity &&
       (ticket.concernedDealer?.toString() === dealerIdentity.id.toString() ||
         ticket.dealerSnapshot?.dealerId?.toString() === dealerIdentity.id.toString());
+=======
+    // Security check
+    const isAdmin = user.role === ROLES.SUPER_ADMIN;
+    const isRequester = ticket.requester.toString() === user.id.toString();
+    const isConcernedDealer = dealerIdentity && ticket.concernedDealer?.toString() === dealerIdentity.id.toString();
+>>>>>>> origin/Dhanesh
 
     if (!isAdmin && !isRequester && !isConcernedDealer) {
       throw ApiError.forbidden('You do not have access to this ticket.');
@@ -762,6 +919,7 @@ export class ComplaintService {
 
     return ticket;
   }
+<<<<<<< HEAD
 
   /**
    * Get In-App Notifications for Dealer
@@ -807,3 +965,7 @@ export class ComplaintService {
     ).lean();
   }
 }
+=======
+}
+
+>>>>>>> origin/Dhanesh

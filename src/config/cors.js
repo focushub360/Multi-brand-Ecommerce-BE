@@ -1,5 +1,6 @@
 import { env } from './env.js';
 
+<<<<<<< HEAD
 const configuredClientUrls = (env.CLIENT_URL || '')
   .split(',')
   .map((url) => url.trim().replace(/\/+$/, ''))
@@ -9,6 +10,10 @@ const allowedOrigins = [
   ...configuredClientUrls,
   'http://localhost:5174',
   'http://127.0.0.1:5174',
+=======
+const allowedOrigins = [
+  env.CLIENT_URL,
+>>>>>>> origin/Dhanesh
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:3000'

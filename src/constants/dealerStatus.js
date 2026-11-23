@@ -1,6 +1,9 @@
 export const DEALER_STATUS = Object.freeze({
   PENDING: 'PENDING',
+<<<<<<< HEAD
   PENDING_KYC: 'PENDING_KYC',
+=======
+>>>>>>> origin/Dhanesh
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED',
   SUSPENDED: 'SUSPENDED'

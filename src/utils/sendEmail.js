@@ -51,7 +51,11 @@ export const sendDealerApprovalEmail = async ({
   expiryHours = 24
 }) => {
   const subject = `Welcome to GROVE – Dealership Approved for ${businessName}`;
+<<<<<<< HEAD
   const loginUrl = `${env.CLIENT_URL || 'http://localhost:5174'}/login`;
+=======
+  const loginUrl = `${env.CLIENT_URL || 'http://localhost:5173'}/login`;
+>>>>>>> origin/Dhanesh
 
   const html = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #E2E8F0; border-radius: 12px; background-color: #ffffff;">
@@ -100,9 +104,13 @@ export const sendDealerApprovalEmail = async ({
     </div>
   `;
 
+<<<<<<< HEAD
   const text = `Congratulations ${ownerName}!\n\nYour dealership application for ${businessName} has been approved by GROVE Platform Administration.\n\nTemporary One-Time Password: ${temporaryPassword}\nLogin Email: ${to}\nValid for ${expiryHours} hours.\n\nSign in to set your permanent password: ${loginUrl}\n\nGROVE Marketplace Partner Desk`;
 
   return await sendEmail({ to, subject, html, text });
+=======
+  return await sendEmail({ to, subject, html });
+>>>>>>> origin/Dhanesh
 };
 
 /**
@@ -114,6 +122,7 @@ export const sendDealerRejectionEmail = async ({
   businessName,
   reason
 }) => {
+<<<<<<< HEAD
   const subject = `Your request for the dealer is rejected – ${businessName}`;
 
   const html = `
@@ -140,20 +149,45 @@ export const sendDealerRejectionEmail = async ({
         </p>
         <p style="color: #0F172A; font-size: 15px; margin: 0; font-weight: 600;">
           ${reason || 'Commercial documentation requirements were not satisfied or incomplete.'}
+=======
+  const subject = `Update on your GROVE Dealership Application – ${businessName}`;
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #E2E8F0; border-radius: 12px; background-color: #ffffff;">
+      <h2 style="color: #1B4332; margin-top: 0;">GROVE Marketplace</h2>
+      <p style="color: #334155; font-size: 14px;">Dear ${ownerName},</p>
+      <p style="color: #334155; font-size: 14px; line-height: 1.6;">
+        Thank you for your interest in partnering with GROVE as an authorized merchant. After reviewing your commercial documents for
+        <strong>${businessName}</strong>, our operations team was unable to move forward with the application at this time.
+      </p>
+
+      <div style="background-color: #FEF2F2; border-left: 4px solid #EF4444; padding: 14px; margin: 20px 0; border-radius: 4px;">
+        <p style="color: #991B1B; font-weight: bold; margin: 0 0 4px 0; font-size: 13px;">Reason for Decision:</p>
+        <p style="color: #7F1D1D; margin: 0; font-size: 14px;">
+          ${reason || 'Your commercial documentation requirements were not satisfied or the application was incomplete.'}
+>>>>>>> origin/Dhanesh
         </p>
       </div>
 
       <p style="color: #64748B; font-size: 13px; line-height: 1.5;">
+<<<<<<< HEAD
         If you have updated commercial documentation or questions, please contact GROVE Partner Desk at support@grove.com.
       </p>
 
       <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0 16px 0;" />
+=======
+        You may re-apply with updated documentation, or contact our Partner Support Desk if you have questions.
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
+>>>>>>> origin/Dhanesh
       <p style="color: #94A3B8; font-size: 12px; text-align: center; margin: 0;">
         GROVE Marketplace &bull; Partner Operations Desk
       </p>
     </div>
   `;
 
+<<<<<<< HEAD
   const text = `Dear ${ownerName},\n\nYour request for the dealer is rejected for ${businessName}.\n\nReason: ${reason || 'Commercial documentation requirements were not satisfied.'}\n\nGROVE Marketplace Partner Desk`;
 
   return await sendEmail({ to, subject, html, text });
@@ -339,4 +373,7 @@ export const sendTicketStatusNotification = async ({
   const text = `Ticket #${ticketId} status updated to: ${newStatus}\nSubject: ${ticketSubject}\n${reason || note ? `Note: ${reason || note}\n` : ''}View ticket: ${actionUrl}`;
 
   return await sendEmail({ to, subject: emailSubject, html, text });
+=======
+  return await sendEmail({ to, subject, html });
+>>>>>>> origin/Dhanesh
 };

@@ -1,162 +1,106 @@
-# GROVE – Multi-Brand E-Commerce Frontend
+# GROVE Multi-Brand E-Commerce Backend
 
-## 1. Project Overview
+Production-ready, modular, and secure backend for the GROVE Multi-Brand Marketplace (Agriculture, Electronics, Automotive, Groceries) built with Node.js, Express.js (ES Modules), MongoDB Atlas, Mongoose, and JWT.
 
-GROVE is a multi-brand e-commerce marketplace that allows customers to explore products from different categories such as Agriculture, Electronics, Automotive, and Groceries.
+---
 
-The application also provides dedicated Admin and Dealer dashboards for marketplace management.
+## Features
+- **Unified Single Login:** One endpoint (`/api/v1/auth/login`) for Super Admin, Dealers, and Customers.
+- **Strict Role-Based Access Control (RBAC):** Server-enforced permissions across 3 distinct personas.
+- **Dealer Onboarding Lifecycle:** 12-character secure temporary password generation with 24-hour expiration and forced first-time password reset.
+- **Category Lockdown:** Dealers can only create products matching their approved primary category.
+- **Multi-Dealer Fulfillment:** Master customer orders are partitioned into independent dealer fulfillment suborders (`DealerOrder`).
+- **Multi-Depot Inventory:** Real-time stock tracking with immutable movement ledger (`InventoryTransaction`).
+- **Geospatial Proximity:** Delivery serviceability checks with MongoDB `2dsphere` index and Haversine distance calculations.
+- **Address Management:** Customer addresses with a strict 5-address limit.
+- **Interactive Documentation:** Swagger UI documentation available at `/api/v1/docs`.
 
-## 2. Technologies Used
+---
 
-- React 19
-- Vite 8
-- JavaScript
-- Tailwind CSS 4
-- React Router DOM 7
-- Lucide React
+## Technology Stack
+- **Runtime:** Node.js v20+ (ES Modules)
+- **Framework:** Express.js 4.21+
+- **Database:** MongoDB Atlas / Local MongoDB with Mongoose 8.9+
+- **Authentication:** JWT (Access Tokens + Refresh Token Rotation with SHA-256 Hashes)
+- **Password Security:** bcrypt (12 salt rounds)
+- **Email Service:** Nodemailer
+- **Request Validation:** Zod
+- **API Documentation:** Swagger / OpenAPI 3.0
+- **Testing:** Vitest & Supertest
 
-## 3. Features
+---
 
-- Multi-category product browsing
-- Agriculture products
-- Electronics products
-- Automotive products
-- Groceries section
-- Customer login and signup
-- Shopping cart
-- Wishlist
-- Customer account and orders
-- Admin dashboard
-- Dealer dashboard
-- Product and inventory management
-- API integration
-
-## 4. Project Structure
-
-```text
-src/
-├── assets/
-├── components/
-│   ├── admin/
-│   ├── agriculture/
-│   ├── auth/
-│   ├── automotive/
-│   ├── customer/
-│   ├── dealer/
-│   ├── electronics/
-│   └── groceries/
-├── constants/
-├── pages/
-│   ├── admin/
-│   ├── customer/
-│   └── dealer/
-├── services/
-└── utils/
+## Directory Structure
+```
+backend/
+├── src/
+│   ├── config/         # Database, env validation, mail, cors, swagger
+│   ├── constants/      # Roles, permissions, order & dealer statuses
+│   ├── middlewares/    # Auth, RBAC, Zod validator, rate limiting, error handler
+│   ├── modules/
+│   │   ├── auth/
+│   │   ├── users/
+│   │   ├── dealers/
+│   │   ├── categories/
+│   │   ├── products/
+│   │   ├── inventory/
+│   │   ├── cart/
+│   │   ├── wishlist/
+│   │   ├── addresses/
+│   │   ├── dealer-locations/
+│   │   ├── orders/
+│   │   ├── payments/
+│   │   ├── settlements/
+│   │   ├── complaints/
+│   │   ├── analytics/
+│   │   └── admin/
+│   ├── routes/         # Central API route aggregator (/api/v1)
+│   ├── utils/          # ApiError, ApiResponse, asyncHandler, crypto utils
+│   ├── app.js          # Express app configuration
+│   └── server.js       # Server bootstrap & DB connection
+├── docs/               # Architecture, API & Schema Documentation
+├── tests/              # Automated unit and integration test suite
+├── .env                # Local environment variables
+├── .env.example        # Environment variable template
+└── package.json
 ```
 
-## 5. Prerequisites
+---
 
-Install the following before running the project:
+## Quick Start
 
-- Node.js
-- npm
-- Git
-- Visual Studio Code (recommended)
-
-## 6. Installation
-
-### Step 1: Clone Repository
-
+### 1. Install Dependencies
 ```bash
-git clone https://github.com/focushub360/Multi-brand-Ecommerce-Frontend.git
-```
-
-### Step 2: Navigate to Project
-
-```bash
-cd Multi-brand-Ecommerce-Frontend
-```
-
-### Step 3: Install Dependencies
-
-```bash
+cd backend
 npm install
 ```
 
-## 7. Environment Configuration
-
-Create a `.env` file in the project root.
-
+### 2. Configure Environment
+Copy `.env.example` to `.env` and verify your MongoDB URI and JWT secrets:
 ```env
-VITE_API_URL=http://localhost:5000/api/v1
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+MONGODB_URI=mongodb://127.0.0.1:27017/grove_ecommerce
+JWT_ACCESS_SECRET=your_jwt_access_secret_key_minimum_32_characters_long
+JWT_REFRESH_SECRET=your_jwt_refresh_secret_key_minimum_32_characters_long
+ADMIN_EMAIL=admin@grove.com
+ADMIN_PASSWORD=Admin@123
 ```
 
-Replace the example URL with the actual backend API URL.
-
-The API client is configured in:
-
-`src/services/apiClient.js`
-
-Default API configuration:
-
-```javascript
-import.meta.env.VITE_API_URL || '/api/v1'
-```
-
-## 8. Run the Frontend
-
-Start the development server:
-
+### 3. Start Development Server
 ```bash
 npm run dev
 ```
 
-Open the URL displayed in the terminal.
-
-Default development URL:
-
-`http://localhost:5173`
-
-## 9. Build for Production
-
+### 4. Run Automated Tests
 ```bash
-npm run build
+npm test
 ```
 
-## 10. Preview Production Build
-
-```bash
-npm run preview
+### 5. Access Interactive API Documentation
+Open your browser and navigate to:
+```
+http://localhost:5000/api/v1/docs
 ```
 
-## 11. Available Scripts
-
-| Command | Description |
-|---|---|
-| npm run dev | Start development server |
-| npm run build | Build production application |
-| npm run preview | Preview production build |
-| npm run lint | Run Oxlint |
-
-## 12. Backend Integration
-
-The frontend communicates with backend services through the API client.
-
-- API configuration: `src/services/apiClient.js`
-- API base URL: Configured using `VITE_API_URL`
-- Default API path: `/api/v1`
-
-The actual backend URL and available endpoints must be configured according to the backend project.
-
-## 13. Repository
-
-GitHub Repository:
-
-https://github.com/focushub360/Multi-brand-Ecommerce-Frontend
-
-## 14. Notes
-
-- This repository contains the frontend application.
-- Backend services are maintained separately.
-- API functionality requires a configured backend server.
-- Never commit passwords, API secrets, or private environment variables.

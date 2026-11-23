@@ -29,6 +29,7 @@ export const dealerApplicationSchema = z.object({
 
 export const dealerStoreSettingsSchema = z.object({
   body: z.object({
+<<<<<<< HEAD
     businessName: z.string().trim().min(2).optional(),
     warehouseAddress: z.string().trim().min(5).optional(),
     city: z.string().trim().optional(),
@@ -40,10 +41,16 @@ export const dealerStoreSettingsSchema = z.object({
       state: z.string().optional(),
       pincode: z.string().optional()
     }).optional(),
+=======
+>>>>>>> origin/Dhanesh
     tagline: z.string().max(200).optional(),
     description: z.string().max(1000).optional(),
     operatingHours: z.string().max(100).optional(),
     isOpen: z.boolean().optional()
+<<<<<<< HEAD
+=======
+    // STRICT RULE: No businessName, gstin, primaryCategory, warehouseAddress allowed in this schema!
+>>>>>>> origin/Dhanesh
   })
 });
 
@@ -68,6 +75,7 @@ export const dealerStatusSchema = z.object({
   }).strict()
 });
 
+<<<<<<< HEAD
 export const dealerBankDetailsSchema = z.object({
   body: z.object({
     bankName: z.string().trim().min(2, 'Bank name is required'),
@@ -84,6 +92,8 @@ export const dealerVerifyKycSchema = z.object({
   }).optional()
 });
 
+=======
+>>>>>>> origin/Dhanesh
 export const adminDealerUpdateSchema = z.object({
   body: z.object({
     businessName: z.string().trim().min(2).optional(),

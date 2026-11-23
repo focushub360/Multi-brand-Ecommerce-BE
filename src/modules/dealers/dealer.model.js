@@ -1,6 +1,9 @@
 import mongoose, { Schema } from 'mongoose';
 import { DEALER_STATUS, ALL_DEALER_STATUSES } from '../../constants/dealerStatus.js';
+<<<<<<< HEAD
 import { hashPassword, comparePassword } from '../../utils/passwordHash.js';
+=======
+>>>>>>> origin/Dhanesh
 
 const kycDocumentSchema = new Schema(
   {
@@ -20,7 +23,11 @@ const approvalHistorySchema = new Schema(
   {
     action: {
       type: String,
+<<<<<<< HEAD
       enum: ['APPROVED', 'REJECTED', 'SUSPENDED', 'REACTIVATED', 'DETAILS_UPDATED'],
+=======
+      enum: ['APPROVED', 'REJECTED', 'SUSPENDED', 'REACTIVATED', 'CREDENTIALS_RESET', 'DETAILS_UPDATED'],
+>>>>>>> origin/Dhanesh
       required: true
     },
     actionBy: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -35,6 +42,7 @@ const dealerSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+<<<<<<< HEAD
       required: false
     },
     password: {
@@ -48,6 +56,10 @@ const dealerSchema = new Schema(
     },
     lastLogin: {
       type: Date
+=======
+      required: true,
+      unique: true
+>>>>>>> origin/Dhanesh
     },
     dealerCode: {
       type: String,
@@ -136,10 +148,13 @@ const dealerSchema = new Schema(
       default: DEALER_STATUS.PENDING,
       index: true
     },
+<<<<<<< HEAD
     rejectionReason: {
       type: String,
       default: ''
     },
+=======
+>>>>>>> origin/Dhanesh
     tier: {
       type: String,
       enum: ['Bronze Tier', 'Silver Tier', 'Gold Tier'],
@@ -162,6 +177,7 @@ const dealerSchema = new Schema(
       bankName: { type: String, default: 'State Bank of India' },
       upiId: { type: String, default: '' }
     },
+<<<<<<< HEAD
     bankVerificationStatus: {
       type: String,
       enum: ['PENDING', 'SUBMITTED', 'VERIFIED', 'REJECTED'],
@@ -172,6 +188,8 @@ const dealerSchema = new Schema(
       type: Date,
       default: null
     },
+=======
+>>>>>>> origin/Dhanesh
     kycDocuments: [kycDocumentSchema],
     storeSettings: {
       tagline: { type: String, default: '' },
@@ -193,6 +211,7 @@ const dealerSchema = new Schema(
   }
 );
 
+<<<<<<< HEAD
 // Pre-save hook: Hash password if modified
 dealerSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) return next();
@@ -206,6 +225,8 @@ dealerSchema.methods.comparePassword = async function (candidatePassword) {
   return await comparePassword(candidatePassword, this.password);
 };
 
+=======
+>>>>>>> origin/Dhanesh
 // 2dsphere index for location queries
 dealerSchema.index({ location: '2dsphere' });
 

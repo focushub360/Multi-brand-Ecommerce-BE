@@ -319,7 +319,11 @@ export class OrderService {
     const order = await Order.findOne(query);
     if (!order) throw ApiError.notFound('Order not found.');
 
+<<<<<<< HEAD
     if (order.orderStatus === 'Shipped' || order.orderStatus === 'Out for Delivery' || order.orderStatus === 'Delivered') {
+=======
+    if (order.orderStatus === 'Shipped' || order.orderStatus === 'Delivered') {
+>>>>>>> origin/Dhanesh
       throw ApiError.badRequest('Orders that have already been dispatched or delivered cannot be cancelled online.');
     }
 
@@ -378,6 +382,7 @@ export class OrderService {
   }
 
   /**
+<<<<<<< HEAD
    * Helper to safely build dealer ownership query preventing Mongoose CastError on string dealer codes
    */
   static _buildDealerFilter(dealerIdent) {
@@ -407,6 +412,17 @@ export class OrderService {
   static async getDealerSubOrders(dealerIdent, { status = '', page = 1, limit = 20 }) {
     const dealerFilter = OrderService._buildDealerFilter(dealerIdent);
     const query = { ...dealerFilter };
+=======
+   * Get Dealer Suborders
+   */
+  static async getDealerSubOrders(dealerId, { status = '', page = 1, limit = 20 }) {
+    const query = {
+      $or: [
+        { dealer: dealerId },
+        { dealerCode: typeof dealerId === 'string' ? dealerId : undefined }
+      ].filter((c) => Object.values(c)[0] !== undefined)
+    };
+>>>>>>> origin/Dhanesh
     if (status) query.orderStatus = status;
 
     const skip = (page - 1) * limit;
@@ -436,8 +452,12 @@ export class OrderService {
   /**
    * Get Dealer Suborder Details
    */
+<<<<<<< HEAD
   static async getDealerSubOrderById(dealerIdent, subOrderId) {
     const dealerFilter = OrderService._buildDealerFilter(dealerIdent);
+=======
+  static async getDealerSubOrderById(dealerId, subOrderId) {
+>>>>>>> origin/Dhanesh
     const cleanId = String(subOrderId || '').replace(/^#/, '').trim();
     const isHex = String(cleanId).match(/^[0-9a-fA-F]{24}$/);
 
@@ -452,16 +472,39 @@ export class OrderService {
 
     const query = {
       $and: [
+<<<<<<< HEAD
         dealerFilter,
+=======
+        {
+          $or: [
+            { dealer: dealerId },
+            { dealerCode: typeof dealerId === 'string' ? dealerId : undefined }
+          ].filter((c) => Object.values(c)[0] !== undefined)
+        },
+>>>>>>> origin/Dhanesh
         { $or: conditions }
       ]
     };
 
+<<<<<<< HEAD
     const order = await DealerOrder.findOne(query)
+=======
+    let order = await DealerOrder.findOne(query)
+>>>>>>> origin/Dhanesh
       .populate('items.product', 'name sku category categoryName subcategory images primaryImage mrp price')
       .populate('parentOrder')
       .lean();
 
+<<<<<<< HEAD
+=======
+    if (!order) {
+      order = await DealerOrder.findOne({ $or: conditions })
+        .populate('items.product', 'name sku category categoryName subcategory images primaryImage mrp price')
+        .populate('parentOrder')
+        .lean();
+    }
+
+>>>>>>> origin/Dhanesh
     if (!order) throw ApiError.notFound('Suborder not found for your dealership.');
     return order;
   }
@@ -469,8 +512,12 @@ export class OrderService {
   /**
    * Update Dealer Fulfillment Status
    */
+<<<<<<< HEAD
   static async updateDealerFulfillmentStatus(dealerIdent, subOrderId, data) {
     const dealerFilter = OrderService._buildDealerFilter(dealerIdent);
+=======
+  static async updateDealerFulfillmentStatus(dealerId, subOrderId, data) {
+>>>>>>> origin/Dhanesh
     const cleanId = String(subOrderId || '').replace(/^#/, '').trim();
     const isHex = String(cleanId).match(/^[0-9a-fA-F]{24}$/);
     const conditions = [];
@@ -479,13 +526,30 @@ export class OrderService {
 
     const query = {
       $and: [
+<<<<<<< HEAD
         dealerFilter,
+=======
+        {
+          $or: [
+            { dealer: dealerId },
+            { dealerCode: typeof dealerId === 'string' ? dealerId : undefined }
+          ].filter((c) => Object.values(c)[0] !== undefined)
+        },
+>>>>>>> origin/Dhanesh
         { $or: conditions }
       ]
     };
 
+<<<<<<< HEAD
     const subOrder = await DealerOrder.findOne(query);
     if (!subOrder) throw ApiError.notFound('Suborder not found for your dealership.');
+=======
+    let subOrder = await DealerOrder.findOne(query);
+    if (!subOrder) {
+      subOrder = await DealerOrder.findOne({ $or: conditions });
+    }
+    if (!subOrder) throw ApiError.notFound('Suborder not found.');
+>>>>>>> origin/Dhanesh
 
     const oldStatus = subOrder.orderStatus;
     const newStatus = data.orderStatus;
@@ -507,7 +571,10 @@ export class OrderService {
     // Check if Parent Order should reflect progress
     const allSiblings = await DealerOrder.find({ parentOrder: subOrder.parentOrder });
     const allDelivered = allSiblings.every((s) => s.orderStatus === 'Delivered');
+<<<<<<< HEAD
     const anyOutForDelivery = allSiblings.some((s) => s.orderStatus === 'Out for Delivery');
+=======
+>>>>>>> origin/Dhanesh
     const anyShipped = allSiblings.some((s) => s.orderStatus === 'Shipped' || s.orderStatus === 'In Transit');
 
     if (allDelivered) {
@@ -515,11 +582,14 @@ export class OrderService {
         orderStatus: 'Delivered',
         $push: { timeline: { status: 'Delivered', title: 'Delivered', note: 'All items delivered successfully.', timestamp: new Date() } }
       });
+<<<<<<< HEAD
     } else if (anyOutForDelivery) {
       await Order.findByIdAndUpdate(subOrder.parentOrder, {
         orderStatus: 'Out for Delivery',
         $push: { timeline: { status: 'Out for Delivery', title: 'Out for Delivery', note: 'Items are out for delivery to destination.', timestamp: new Date() } }
       });
+=======
+>>>>>>> origin/Dhanesh
     } else if (anyShipped) {
       await Order.findByIdAndUpdate(subOrder.parentOrder, {
         orderStatus: 'Shipped',

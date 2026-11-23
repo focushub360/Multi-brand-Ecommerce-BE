@@ -195,8 +195,11 @@ export class ProductService {
     // Update safe fields
     if (updateData.name) product.name = updateData.name.trim();
     if (updateData.description) product.description = updateData.description.trim();
+<<<<<<< HEAD
     if (updateData.category) product.categoryName = updateData.category;
     if (updateData.subcategory) product.subcategory = updateData.subcategory.trim();
+=======
+>>>>>>> origin/Dhanesh
     if (updateData.price !== undefined) {
       product.price = Number(updateData.price);
       if (product.mrp > product.price) {
@@ -241,7 +244,10 @@ export class ProductService {
     if (updateData.image) product.image = updateData.image;
     if (updateData.images) product.images = updateData.images;
     if (updateData.specs) product.specs = updateData.specs;
+<<<<<<< HEAD
     if (updateData.specifications) product.specs = updateData.specifications;
+=======
+>>>>>>> origin/Dhanesh
     if (updateData.highlights) product.highlights = updateData.highlights;
     if (updateData.warranty) product.warranty = updateData.warranty;
 
@@ -265,6 +271,7 @@ export class ProductService {
 
     product.status = 'Archived';
     await product.save();
+<<<<<<< HEAD
 
     // Also archive associated inventory record
     try {
@@ -276,6 +283,8 @@ export class ProductService {
       console.warn('Inventory archive warning on product delete:', e.message);
     }
 
+=======
+>>>>>>> origin/Dhanesh
     ProductService.syncProductsJson().catch(() => {});
 
     return { message: `Product '${product.name}' archived successfully.` };
@@ -286,11 +295,15 @@ export class ProductService {
    */
   static async getDealerProducts(dealerId, { page = 1, limit = 20, status = '' }) {
     const filter = { dealer: dealerId };
+<<<<<<< HEAD
     if (status) {
       filter.status = status;
     } else {
       filter.status = { $ne: 'Archived' };
     }
+=======
+    if (status) filter.status = status;
+>>>>>>> origin/Dhanesh
 
     const skip = (page - 1) * limit;
     const [products, total] = await Promise.all([

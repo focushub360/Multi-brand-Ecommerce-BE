@@ -1,5 +1,6 @@
 [
   {
+<<<<<<< HEAD
     "name": "Heavy Duty Multi-Row Ceramic Clutch Plate Assembly 280mm",
     "sku": "SKU-AU-TEST-1008",
     "slug": "heavy-duty-multi-row-ceramic-clutch-plate-assembly-280mm-9600",
@@ -1814,5 +1815,55 @@
       "Export Grade Long-Grain Basmati",
       "Lab Tested & Moisture Sealed"
     ]
+=======
+    "name": "cashews",
+    "sku": "SKU-AG-TEST-2315",
+    "slug": "cashews-1981",
+    "categoryName": "Groceries",
+    "subcategory": "Farm Fresh Pulses",
+    "brand": "GROVE Prime",
+    "description": "high protein  nuts",
+    "price": 1000,
+    "mrp": 2000,
+    "discount": 50,
+    "stock": 50,
+    "rating": 4.5,
+    "reviewCount": 10,
+    "image": "/images/card-agri-clean.png",
+    "images": [
+      "/images/card-agri-clean.png"
+    ],
+    "specs": {
+      "material": "nuts",
+      "pipeSize": "grams",
+      "flowRate": "test"
+    },
+    "highlights": []
+  },
+  {
+    "name": "Smart Precision Agri Telemetry Soil Moisture & Temp Sensor Hub",
+    "sku": "SKU-EL-TEST-9716",
+    "slug": "smart-precision-agri-telemetry-soil-moisture-temp-sensor-hub-7242",
+    "categoryName": "Agriculture & Farming",
+    "subcategory": "Smart Sensors & IoT",
+    "brand": "GROVE Prime",
+    "description": "Solar-powered IoT multi-depth soil moisture, EC salinity, and ambient temperature telemetry probe with Bluetooth 5.0 and 4G GSM cloud uplink for real-time agronomy analytics.",
+    "price": 6899,
+    "mrp": 8000,
+    "discount": 19,
+    "stock": 28,
+    "rating": 4.5,
+    "reviewCount": 10,
+    "image": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80"
+    ],
+    "specs": {
+      "material": "Weatherproof Anodized Stainless Steel & UV-Stabilized ABS",
+      "pipeSize": "300 mm Probe Depth",
+      "flowRate": "RS485 Modbus RTU / 4G GSM"
+    },
+    "highlights": []
+>>>>>>> origin/Dhanesh
   }
 ]
