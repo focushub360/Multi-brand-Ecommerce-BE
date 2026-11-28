@@ -115,7 +115,6 @@ export const getMe = asyncHandler(async (req, res) => {
   );
 });
 
-<<<<<<< HEAD
 export const firstTimePassword = asyncHandler(async (req, res) => {
   const { newPassword } = req.body;
   const result = await AuthService.setFirstTimePassword({
@@ -134,8 +133,6 @@ export const firstTimePassword = asyncHandler(async (req, res) => {
   );
 });
 
-=======
->>>>>>> origin/Dhanesh
 export const initialSetupPassword = asyncHandler(async (req, res) => {
   const { email, temporaryPassword, newPassword } = req.body;
   const ipAddress = req.ip || req.headers['x-forwarded-for'] || '';

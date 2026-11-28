@@ -35,7 +35,6 @@ export const registerSchema = z.object({
   })
 });
 
-<<<<<<< HEAD
 export const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?`~]).{8,}$/;
 
 export const passwordRule = z
@@ -67,14 +66,6 @@ export const firstTimePasswordSchema = z.object({
   }).refine((data) => data.newPassword === data.confirmPassword, {
     message: 'New password and confirm password must match',
     path: ['confirmPassword']
-=======
-export const changePasswordSchema = z.object({
-  body: z.object({
-    currentPassword: z.string({ required_error: 'Current password is required' }),
-    newPassword: z
-      .string({ required_error: 'New password is required' })
-      .min(6, 'New password must be at least 6 characters long')
->>>>>>> origin/Dhanesh
   })
 });
 

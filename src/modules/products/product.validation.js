@@ -20,13 +20,8 @@ export const createProductSchema = z.object({
     stock: z.coerce.number().int().min(0).max(100000000).default(0),
     threshold: z.coerce.number().int().min(0).max(100000000).optional().default(10),
     status: z.enum(['Active', 'Draft']).optional().default('Active'),
-<<<<<<< HEAD
     image: z.string().trim().max(10000000).optional().default('/images/card-agri-clean.png'),
     images: z.array(z.string().trim().max(10000000)).max(20).optional(),
-=======
-    image: z.string().trim().max(500).optional().default('/images/card-agri-clean.png'),
-    images: z.array(z.string().trim().max(500)).max(20).optional(),
->>>>>>> origin/Dhanesh
     specs: z.record(z.any()).optional(),
     specifications: z.record(z.any()).optional(),
     highlights: z.array(z.string().trim().min(1).max(300)).max(50).optional(),
@@ -48,13 +43,8 @@ export const updateProductSchema = z.object({
     stock: z.coerce.number().int().min(0).max(100000000).optional(),
     threshold: z.coerce.number().int().min(0).max(100000000).optional(),
     status: z.enum(['Active', 'Draft', 'Archived', 'Pending Approval', 'Rejected']).optional(),
-<<<<<<< HEAD
     image: z.string().trim().max(10000000).optional(),
     images: z.array(z.string().trim().max(10000000)).max(20).optional(),
-=======
-    image: z.string().trim().max(500).optional(),
-    images: z.array(z.string().trim().max(500)).max(20).optional(),
->>>>>>> origin/Dhanesh
     specs: z.record(z.any()).optional(),
     specifications: z.record(z.any()).optional(),
     highlights: z.array(z.string().trim().min(1).max(300)).max(50).optional(),

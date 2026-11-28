@@ -93,11 +93,20 @@ export class AdminService {
     settings.updatedBy = user.id;
 
     await settings.save();
+    const updatedGroups = Object.keys(data).filter((k) => allowed[k]);
+    const detailsSummary = updatedGroups.length > 0
+      ? `Updated platform settings: ${updatedGroups.join(', ')}`
+      : 'Modified platform configuration parameters';
+
     await AdminService.recordAuditLog({
-      action: 'PLATFORM_SETTINGS_UPDATED', actor: user.id, actorRole: user.role,
-      targetEntity: 'AdminSettings', targetId: String(settings._id),
-      details: `Sensitive platform settings updated: ${JSON.stringify(data)}`,
-      ipAddress: user.ipAddress || '', userAgent: user.userAgent || ''
+      action: 'PLATFORM_SETTINGS_UPDATED',
+      actor: user.id,
+      actorRole: user.role,
+      targetEntity: 'AdminSettings',
+      targetId: String(settings._id),
+      details: detailsSummary,
+      ipAddress: user.ipAddress || '',
+      userAgent: user.userAgent || ''
     });
     return settings;
   }

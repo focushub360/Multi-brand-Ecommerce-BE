@@ -33,44 +33,29 @@ export const cancelMyOrder = asyncHandler(async (req, res) => {
 });
 
 export const getDealerOrders = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
   const result = await OrderService.getDealerSubOrders(
     { dealerId: req.dealer.id, dealerCode: req.dealer.dealerCode },
     req.query
   );
-=======
-  const dealerId = req.dealer.id;
-  const result = await OrderService.getDealerSubOrders(dealerId, req.query);
->>>>>>> origin/Dhanesh
   return res.status(200).json(
     ApiResponse.success(result.orders, 'Dealer fulfillment orders retrieved successfully', 200, result.pagination)
   );
 });
 
 export const getDealerOrderById = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
   const order = await OrderService.getDealerSubOrderById(
     { dealerId: req.dealer.id, dealerCode: req.dealer.dealerCode },
     req.params.id
   );
-=======
-  const dealerId = req.dealer.id;
-  const order = await OrderService.getDealerSubOrderById(dealerId, req.params.id);
->>>>>>> origin/Dhanesh
   return res.status(200).json(ApiResponse.success(order, 'Dealer suborder details retrieved successfully'));
 });
 
 export const updateFulfillmentStatus = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
   const order = await OrderService.updateDealerFulfillmentStatus(
     { dealerId: req.dealer.id, dealerCode: req.dealer.dealerCode },
     req.params.id,
     req.body
   );
-=======
-  const dealerId = req.dealer.id;
-  const order = await OrderService.updateDealerFulfillmentStatus(dealerId, req.params.id, req.body);
->>>>>>> origin/Dhanesh
   return res.status(200).json(ApiResponse.success(order, 'Fulfillment status updated successfully'));
 });
 

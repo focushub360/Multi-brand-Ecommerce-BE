@@ -19,7 +19,6 @@ export class DealerService {
     const cleanEmail = data.officialEmail.toLowerCase().trim();
     const cleanGstin = data.gstin.toUpperCase().trim();
 
-<<<<<<< HEAD
     // 1. Check duplicate email in Dealers or Users
     const existingDealer = await Dealer.findOne({
       $or: [{ officialEmail: cleanEmail }, { gstin: cleanGstin }]
@@ -40,17 +39,6 @@ export class DealerService {
       } else {
         throw ApiError.conflict('Dealer email already exists.');
       }
-=======
-    // 1. Check duplicate email in Users or Dealers
-    const existingUser = await User.findOne({ email: cleanEmail });
-    if (existingUser) {
-      throw ApiError.conflict('An account with this official email already exists on GROVE.');
-    }
-
-    const existingGstin = await Dealer.findOne({ gstin: cleanGstin });
-    if (existingGstin) {
-      throw ApiError.conflict('A dealership with this GSTIN is already registered.');
->>>>>>> origin/Dhanesh
     }
 
     // 2. Resolve Primary Category
@@ -67,7 +55,6 @@ export class DealerService {
       throw ApiError.badRequest(`Selected primary category '${data.primaryCategory}' is invalid.`);
     }
 
-<<<<<<< HEAD
     // 3. Generate sequential collision-safe Dealer Code (e.g. DEALER_001)
     const count = await Dealer.countDocuments();
     let nextNum = count + 1;
@@ -81,28 +68,6 @@ export class DealerService {
     const dealer = new Dealer({
       password: initialPlaceholderPassword,
       mustChangePassword: true,
-=======
-    // 3. Generate sequential Dealer Code (e.g. DEALER_001)
-    const count = await Dealer.countDocuments();
-    const dealerCode = `DEALER_${String(count + 1).padStart(3, '0')}`;
-
-    // 4. Create base user account (initially inactive / pending password setup)
-    const initialPlaceholderPassword = generateSecurePassword(16);
-    const user = new User({
-      name: data.ownerName.trim(),
-      email: cleanEmail,
-      phone: data.phone.trim(),
-      password: initialPlaceholderPassword,
-      role: ROLES.DEALER,
-      status: 'ACTIVE',
-      mustChangePassword: true
-    });
-    await user.save();
-
-    // 5. Create Dealer record
-    const dealer = new Dealer({
-      user: user._id,
->>>>>>> origin/Dhanesh
       dealerCode,
       businessName: data.businessName.trim(),
       businessType: data.businessType,
@@ -194,7 +159,6 @@ export class DealerService {
       console.error(`❌ [DEALER APPROVAL] Email delivery failed:`, emailErr.message);
     }
 
-<<<<<<< HEAD
     // 3. Update dealer record with hashed temporary password and transition to PENDING_KYC
     dealer.status = DEALER_STATUS.PENDING_KYC;
     dealer.bankVerificationStatus = 'PENDING';
@@ -204,13 +168,6 @@ export class DealerService {
     dealer.payoutHold = false;
     dealer.password = temporaryPassword; // hashed automatically by dealerSchema pre-save
     dealer.mustChangePassword = true;
-=======
-    // 3. Update dealer record with hashed temporary password
-    dealer.status = DEALER_STATUS.APPROVED;
-    dealer.commissionRate = options.commissionRate ?? dealer.commissionRate;
-    dealer.tier = options.tier ?? dealer.tier;
-    dealer.payoutHold = false;
->>>>>>> origin/Dhanesh
     dealer.temporaryPassword = {
       hash: tempHash,
       expiresAt,
@@ -218,23 +175,11 @@ export class DealerService {
       mustChange: true
     };
 
-<<<<<<< HEAD
-=======
-    dealer.kycDocuments = dealer.kycDocuments.map((doc) => ({
-      ...doc.toObject(),
-      status: 'Verified'
-    }));
-
->>>>>>> origin/Dhanesh
     dealer.approvalHistory.push({
       action: 'APPROVED',
       actionBy: adminUser.id,
       timestamp: new Date(),
-<<<<<<< HEAD
       reason: options.notes || 'Dealer application accepted; credentials issued for KYC & bank verification'
-=======
-      reason: options.notes || 'KYC verified and approved by Super Admin'
->>>>>>> origin/Dhanesh
     });
 
     await dealer.save();
@@ -246,20 +191,7 @@ export class DealerService {
       ipAddress: adminUser.ipAddress || '', userAgent: adminUser.userAgent || ''
     });
 
-<<<<<<< HEAD
     // 4. Mark pending admin notification as read
-=======
-    // 4. Update linked User record password to the temporary password
-    const user = await User.findById(dealer.user);
-    if (user) {
-      user.password = temporaryPassword; // will be hashed by userSchema pre-save
-      user.mustChangePassword = true;
-      user.status = 'ACTIVE';
-      await user.save();
-    }
-
-    // 5. Mark pending admin notification as read
->>>>>>> origin/Dhanesh
     try {
       await AdminNotification.updateMany(
         { entityId: dealer._id.toString(), category: 'DEALER_ONBOARDING', isRead: false },
@@ -294,15 +226,12 @@ static async rejectDealer(dealerId, adminUser, reason) {
     throw ApiError.notFound('Dealer not found.');
   }
 
-<<<<<<< HEAD
   if (!reason || typeof reason !== 'string' || reason.trim().length < 5) {
     throw ApiError.badRequest('Rejection reason is required (minimum 5 characters).');
   }
 
   const cleanReason = reason.trim();
 
-=======
->>>>>>> origin/Dhanesh
   // 1. Check status BEFORE changing it
   if (dealer.status === DEALER_STATUS.REJECTED) {
     throw ApiError.badRequest(
@@ -316,24 +245,15 @@ static async rejectDealer(dealerId, adminUser, reason) {
     );
   }
 
-<<<<<<< HEAD
   // 2. Update dealer status and store rejection reason
   dealer.status = DEALER_STATUS.REJECTED;
   dealer.rejectionReason = cleanReason;
-=======
-  // 2. Update dealer status
-  dealer.status = DEALER_STATUS.REJECTED;
->>>>>>> origin/Dhanesh
 
   dealer.approvalHistory.push({
     action: 'REJECTED',
     actionBy: adminUser.id,
     timestamp: new Date(),
-<<<<<<< HEAD
     reason: cleanReason
-=======
-    reason
->>>>>>> origin/Dhanesh
   });
 
   await dealer.save();
@@ -341,11 +261,7 @@ static async rejectDealer(dealerId, adminUser, reason) {
   await AdminService.recordAuditLog({
     action: 'DEALER_REJECTED', actor: adminUser.id, actorRole: adminUser.role,
     targetEntity: 'Dealer', targetId: dealer._id.toString(),
-<<<<<<< HEAD
     details: `Dealer application rejected. Reason: ${cleanReason}`,
-=======
-    details: `Dealer application rejected. Reason: ${reason || 'Not provided'}`,
->>>>>>> origin/Dhanesh
     ipAddress: adminUser.ipAddress || '', userAgent: adminUser.userAgent || ''
   });
 
@@ -426,25 +342,13 @@ static async rejectDealer(dealerId, adminUser, reason) {
       ipAddress: adminUser.ipAddress || '', userAgent: adminUser.userAgent || ''
     });
 
-<<<<<<< HEAD
-=======
-    // Also update linked user status
-    await User.findByIdAndUpdate(dealer.user, {
-      status: newStatus === DEALER_STATUS.SUSPENDED ? 'SUSPENDED' : 'ACTIVE'
-    });
-
->>>>>>> origin/Dhanesh
     return { message: `Dealer status changed to ${newStatus}.`, dealer };
   }
 
   /**
    * Dealer Updates Store Settings
-<<<<<<< HEAD
    * Allows updating store name, warehouse address & hub, store description, tagline, and operating hours.
    * Strictly prevents modification of gstin, officialEmail, phone, and primaryCategory.
-=======
-   * Server strictly prevents modification of businessName, gstin, primaryCategory, warehouseAddress.
->>>>>>> origin/Dhanesh
    */
   static async updateStoreSettings(dealerId, settingsData) {
     const dealer = await Dealer.findById(dealerId);
@@ -452,7 +356,6 @@ static async rejectDealer(dealerId, adminUser, reason) {
       throw ApiError.notFound('Dealer not found.');
     }
 
-<<<<<<< HEAD
     if (settingsData.businessName !== undefined) {
       dealer.businessName = settingsData.businessName.trim();
     }
@@ -476,9 +379,6 @@ static async rejectDealer(dealerId, adminUser, reason) {
     }
 
     if (!dealer.storeSettings) dealer.storeSettings = {};
-=======
-    // Only allow updating safe fields
->>>>>>> origin/Dhanesh
     if (settingsData.tagline !== undefined) dealer.storeSettings.tagline = settingsData.tagline;
     if (settingsData.description !== undefined) dealer.storeSettings.description = settingsData.description;
     if (settingsData.operatingHours !== undefined) dealer.storeSettings.operatingHours = settingsData.operatingHours;
@@ -488,7 +388,6 @@ static async rejectDealer(dealerId, adminUser, reason) {
 
     return {
       message: 'Store settings updated successfully.',
-<<<<<<< HEAD
       dealer: {
         id: dealer._id,
         businessName: dealer.businessName,
@@ -497,13 +396,10 @@ static async rejectDealer(dealerId, adminUser, reason) {
         storeSettings: dealer.storeSettings,
         bankVerificationStatus: dealer.bankVerificationStatus
       },
-=======
->>>>>>> origin/Dhanesh
       storeSettings: dealer.storeSettings
     };
   }
 
-<<<<<<< HEAD
   /**
    * Newly Approved Dealer Verifies Bank Settlement Details
    * Validates IFSC and account number, marks status as VERIFIED, and locks bank details.
@@ -623,8 +519,6 @@ static async rejectDealer(dealerId, adminUser, reason) {
     };
   }
 
-=======
->>>>>>> origin/Dhanesh
   static async updateAdminDealerDetails(dealerId, data, adminUser) {
     const dealer = await Dealer.findById(dealerId);
     if (!dealer) throw ApiError.notFound('Dealer not found.');
@@ -644,14 +538,9 @@ static async rejectDealer(dealerId, adminUser, reason) {
     }
     const normalizedEmail = data.officialEmail?.toLowerCase();
     if (normalizedEmail && normalizedEmail !== dealer.officialEmail) {
-<<<<<<< HEAD
       const duplicateDealer = await Dealer.findOne({ officialEmail: normalizedEmail, _id: { $ne: dealer._id } });
       const duplicateUser = await User.findOne({ email: normalizedEmail });
       if (duplicateDealer || duplicateUser) throw ApiError.conflict('That email is already used by another account.');
-=======
-      const duplicate = await User.findOne({ email: normalizedEmail, _id: { $ne: dealer.user } });
-      if (duplicate) throw ApiError.conflict('That email is already used by another account.');
->>>>>>> origin/Dhanesh
       dealer.officialEmail = normalizedEmail;
     }
     if (data.gstin && data.gstin !== dealer.gstin) {
@@ -667,16 +556,6 @@ static async rejectDealer(dealerId, adminUser, reason) {
     for (const key of ['city', 'state', 'pincode']) {
       if (data[key] !== undefined) dealer.businessAddress[key] = data[key];
     }
-<<<<<<< HEAD
-=======
-    const user = await User.findById(dealer.user);
-    if (user) {
-      if (data.ownerName !== undefined) user.name = data.ownerName;
-      if (normalizedEmail) user.email = normalizedEmail;
-      if (data.phone !== undefined) user.phone = data.phone;
-      await user.save();
-    }
->>>>>>> origin/Dhanesh
     dealer.approvalHistory.push({ action: 'DETAILS_UPDATED', actionBy: adminUser.id, reason: 'Dealer details edited by Super Admin' });
     await dealer.save();
     await AdminService.recordAuditLog({
@@ -691,7 +570,6 @@ static async rejectDealer(dealerId, adminUser, reason) {
   static async resetDealerCredentials(dealerId, adminUser) {
     const dealer = await Dealer.findById(dealerId);
     if (!dealer) throw ApiError.notFound('Dealer not found.');
-<<<<<<< HEAD
     const temporaryPassword = generateSecurePassword(12);
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     dealer.password = temporaryPassword;
@@ -699,25 +577,6 @@ static async rejectDealer(dealerId, adminUser, reason) {
     dealer.temporaryPassword = { hash: await hashPassword(temporaryPassword), expiresAt, isUsed: false, mustChange: true };
     dealer.approvalHistory.push({ action: 'CREDENTIALS_RESET', actionBy: adminUser.id, reason: 'Credentials reset by Super Admin' });
     await dealer.save();
-=======
-    const user = await User.findById(dealer.user);
-    if (!user) throw ApiError.notFound('Dealer login account not found.');
-    const temporaryPassword = generateSecurePassword(12);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    dealer.temporaryPassword = { hash: await hashPassword(temporaryPassword), expiresAt, isUsed: false, mustChange: true };
-    dealer.approvalHistory.push({ action: 'CREDENTIALS_RESET', actionBy: adminUser.id, reason: 'Credentials reset by Super Admin' });
-    await dealer.save();
-    user.password = temporaryPassword;
-    user.mustChangePassword = true;
-    // Credential resets must not reactivate accounts that an admin suspended,
-    // nor grant pending applicants access to the dealer portal.
-    user.status = dealer.status === 'APPROVED'
-      ? 'ACTIVE'
-      : dealer.status === 'SUSPENDED'
-        ? 'SUSPENDED'
-        : 'INACTIVE';
-    await user.save();
->>>>>>> origin/Dhanesh
     let emailSent = false;
     try {
       const result = await sendDealerApprovalEmail({

@@ -12,22 +12,14 @@ export const replyToTicket = asyncHandler(async (req, res) => {
     req.params.ticketId,
     req.user,
     req.dealer,
-<<<<<<< HEAD
     req.body.text,
     req.body.attachments || []
-=======
-    req.body.text
->>>>>>> origin/Dhanesh
   );
   return res.status(200).json(ApiResponse.success(ticket, 'Reply submitted successfully'));
 });
 
 export const getMyTickets = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
   const dealerId = req.dealer?.id || (req.user?.role === 'dealer' ? req.user.id : null);
-=======
-  const dealerId = req.dealer?.id;
->>>>>>> origin/Dhanesh
   const tickets = await ComplaintService.getMyTickets(req.user.id, dealerId);
   return res.status(200).json(ApiResponse.success(tickets, 'Tickets retrieved successfully'));
 });
@@ -45,20 +37,13 @@ export const getAllTickets = asyncHandler(async (req, res) => {
 });
 
 export const updateTicketStatus = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
   const { status, priority, note, reason } = req.body;
   const actor = { ...req.user, ipAddress: req.ip, userAgent: req.get('user-agent') };
   const ticket = await ComplaintService.updateTicketStatus(req.params.ticketId, actor, status, note, reason, priority);
-=======
-  const { status, priority, note } = req.body;
-  const actor = { ...req.user, ipAddress: req.ip, userAgent: req.get('user-agent') };
-  const ticket = await ComplaintService.updateTicketStatus(req.params.ticketId, actor, status, note, priority);
->>>>>>> origin/Dhanesh
   return res.status(200).json(ApiResponse.success(ticket, 'Ticket status updated successfully'));
 });
 
 export const addAdminReply = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
   const { text, internalNote, status, attachments } = req.body;
   const actor = { ...req.user, ipAddress: req.ip, userAgent: req.get('user-agent') };
   const ticket = await ComplaintService.addAdminReply(
@@ -107,10 +92,3 @@ export const markCustomerNotificationRead = asyncHandler(async (req, res) => {
   const notification = await ComplaintService.markCustomerNotificationRead(req.params.id, userId);
   return res.status(200).json(ApiResponse.success(notification, 'Customer notification marked as read'));
 });
-=======
-  const actor = { ...req.user, ipAddress: req.ip, userAgent: req.get('user-agent') };
-  const ticket = await ComplaintService.addAdminReply(req.params.ticketId, actor, req.body.text, req.body.internalNote);
-  return res.status(200).json(ApiResponse.success(ticket, req.body.internalNote ? 'Internal note saved.' : 'Admin reply sent.'));
-});
-
->>>>>>> origin/Dhanesh

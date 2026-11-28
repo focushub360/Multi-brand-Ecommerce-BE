@@ -3,14 +3,10 @@ export const ORDER_STATUS = Object.freeze({
   CONFIRMED: 'Confirmed',
   PROCESSING: 'Processing',
   PACKED: 'Packed',
-<<<<<<< HEAD
   DISPATCHED: 'Dispatched',
   SHIPPED: 'Shipped',
   IN_TRANSIT: 'In Transit',
   OUT_FOR_DELIVERY: 'Out for Delivery',
-=======
-  SHIPPED: 'Shipped',
->>>>>>> origin/Dhanesh
   DELIVERED: 'Delivered',
   CANCELLED: 'Cancelled'
 });

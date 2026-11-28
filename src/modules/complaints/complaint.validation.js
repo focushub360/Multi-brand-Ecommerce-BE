@@ -1,5 +1,4 @@
 import { z } from 'zod';
-<<<<<<< HEAD
 import { TICKET_CATEGORIES, TICKET_STATUSES } from './complaint.model.js';
 
 export const attachmentSchema = z.object({
@@ -24,51 +23,29 @@ export const createTicketSchema = z.object({
   }).refine((data) => Boolean(data.description || data.message), {
     message: 'Detailed description is required',
     path: ['description']
-=======
-
-export const createTicketSchema = z.object({
-  body: z.object({
-    subject: z.string({ required_error: 'Subject is required' }).trim().min(5),
-    category: z.enum(['Logistics & Courier', 'Billing & Tax', 'Product Defect', 'Account & KYC', 'General']),
-    priority: z.enum(['Low', 'Medium', 'High', 'Urgent']).optional(),
-    message: z.string({ required_error: 'Initial message is required' }).trim().min(5),
-    concernedDealer: z.string().optional(),
-    orderNumber: z.string().optional()
->>>>>>> origin/Dhanesh
   })
 });
 
 export const replyTicketSchema = z.object({
   body: z.object({
-<<<<<<< HEAD
     text: z.string({ required_error: 'Message content is required' }).trim().min(1),
     attachments: z.array(attachmentSchema).optional().default([])
-=======
-    text: z.string({ required_error: 'Message content is required' }).trim().min(1)
->>>>>>> origin/Dhanesh
   })
 });
 
 export const updateTicketStatusSchema = z.object({
   body: z.object({
-<<<<<<< HEAD
     status: z.enum(TICKET_STATUSES, {
       errorMap: () => ({ message: 'Please select a valid ticket status.' })
     }),
     priority: z.enum(['Low', 'Medium', 'High', 'Urgent']).optional(),
     note: z.string().trim().max(2000).optional(),
     reason: z.string().trim().max(1000).optional()
-=======
-    status: z.enum(['Open', 'In Progress', 'Escalated', 'Resolved', 'Closed']),
-    priority: z.enum(['Low', 'Medium', 'High', 'Urgent']).optional(),
-    note: z.string().trim().max(2000).optional()
->>>>>>> origin/Dhanesh
   }).strict()
 });
 
 export const adminReplySchema = z.object({
   body: z.object({
-<<<<<<< HEAD
     text: z.string().trim().min(1).max(4000),
     internalNote: z.boolean().default(false),
     status: z.enum(TICKET_STATUSES).optional(),
@@ -81,10 +58,3 @@ export const reopenTicketSchema = z.object({
     reason: z.string().trim().max(2000).optional().default('Issue persists, reopening ticket.')
   })
 });
-=======
-    text: z.string().trim().min(1).max(2000),
-    internalNote: z.boolean().default(false)
-  }).strict()
-});
-
->>>>>>> origin/Dhanesh

@@ -3,19 +3,12 @@ import { verifyAccessToken } from '../utils/generateTokens.js';
 import { User } from '../modules/users/user.model.js';
 import { Dealer } from '../modules/dealers/dealer.model.js';
 import { ROLES } from '../constants/roles.js';
-<<<<<<< HEAD
 import { DEALER_STATUS } from '../constants/dealerStatus.js';
 
 /**
  * Authentication Middleware
  * Validates JWT access token, checks active status, and populates req.user and req.dealer.
  * Dealers authenticate directly against Dealer collection; customers/admins against User collection.
-=======
-
-/**
- * Authentication Middleware
- * Validates JWT access token, checks user active status, and populates req.user (and req.dealer if applicable).
->>>>>>> origin/Dhanesh
  */
 export const authenticate = async (req, _res, next) => {
   try {
@@ -45,7 +38,6 @@ export const authenticate = async (req, _res, next) => {
       return next(ApiError.unauthorized('Invalid authentication token.'));
     }
 
-<<<<<<< HEAD
     // 4. Role-based Identity Retrieval
     if (decoded.role === ROLES.DEALER) {
       const dealer = await Dealer.findById(decoded.id);
@@ -79,9 +71,6 @@ export const authenticate = async (req, _res, next) => {
     }
 
     // Non-dealer accounts (Customers, Admins)
-=======
-    // 4. Fetch User from DB
->>>>>>> origin/Dhanesh
     const user = await User.findById(decoded.id).select('+password');
     if (!user) {
       return next(ApiError.unauthorized('User account no longer exists.'));
@@ -99,26 +88,6 @@ export const authenticate = async (req, _res, next) => {
       mustChangePassword: user.mustChangePassword
     };
 
-<<<<<<< HEAD
-=======
-    // 5. If role is DEALER, populate req.dealer
-    if (user.role === ROLES.DEALER) {
-      const dealer = await Dealer.findOne({ user: user._id });
-      if (!dealer) {
-        return next(ApiError.forbidden('Dealer profile not found for this account.'));
-      }
-      req.dealer = {
-        id: dealer._id.toString(),
-        dealerCode: dealer.dealerCode,
-        businessName: dealer.businessName,
-        status: dealer.status,
-        primaryCategory: dealer.primaryCategory.toString(),
-        primaryCategoryName: dealer.primaryCategoryName,
-        payoutHold: dealer.payoutHold
-      };
-    }
-
->>>>>>> origin/Dhanesh
     next();
   } catch (err) {
     next(err);

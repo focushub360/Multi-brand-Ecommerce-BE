@@ -13,6 +13,8 @@ const subcategorySchema = new Schema(
       lowercase: true,
       trim: true
     },
+    
+       
     description: {
       type: String,
       default: ''
@@ -42,6 +44,14 @@ const categorySchema = new Schema(
       trim: true,
       index: true
     },
+    image: {
+      type: String,
+      default: ''
+    },
+    images: [{
+      type: String,
+      default: ''
+    }],
     description: {
       type: String,
       default: ''

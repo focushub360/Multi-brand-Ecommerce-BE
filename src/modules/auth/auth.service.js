@@ -16,16 +16,12 @@ import { env } from '../../config/env.js';
 export class AuthService {
   /**
    * Unified Single Login for all roles (SUPER_ADMIN, DEALER, USER)
-<<<<<<< HEAD
    * Autonomous routing: Dealers authenticate against Dealer collection;
    * Customers & Admins authenticate against User collection.
-=======
->>>>>>> origin/Dhanesh
    */
   static async login({ email, password, ipAddress = '', userAgent = '' }) {
     const cleanEmail = email.toLowerCase().trim();
 
-<<<<<<< HEAD
     // 1. Check if email belongs to a Dealer
     const dealer = await Dealer.findOne({ officialEmail: cleanEmail }).select('+password +temporaryPassword.hash');
 
@@ -134,72 +130,14 @@ export class AuthService {
     }
 
     const isPasswordValid = await user.comparePassword(password);
-=======
-    // 1. Find User by email
-    const user = await User.findOne({ email: cleanEmail }).select('+password');
-    let matchedDealer = null;
-    let isTempPasswordLogin = false;
-
-    if (!user) {
-      throw ApiError.unauthorized('Invalid email or password. Please verify your credentials.');
-    }
-
-    // 2. If user is DEALER, also find Dealer profile
-    if (user.role === ROLES.DEALER) {
-      matchedDealer = await Dealer.findOne({ user: user._id }).select('+temporaryPassword.hash');
-    }
-
-    // 3. Verify standard password
-    let isPasswordValid = await user.comparePassword(password);
-
-    // 4. If standard password failed and user is a DEALER, check temporary password
-    if (!isPasswordValid && matchedDealer && matchedDealer.temporaryPassword?.hash) {
-      const tempPw = matchedDealer.temporaryPassword;
-
-      if (tempPw.expiresAt && new Date() > tempPw.expiresAt) {
-        throw ApiError.unauthorized('Your temporary password has expired (validity was 24 hours). Please contact GROVE administration to reissue credentials.');
-      }
-
-      if (tempPw.isUsed) {
-        throw ApiError.unauthorized('This temporary password has already been used. Please log in with your updated permanent password.');
-      }
-
-      const isTempMatch = await comparePassword(password, tempPw.hash);
-      if (isTempMatch) {
-        isPasswordValid = true;
-        isTempPasswordLogin = true;
-      }
-    }
-
->>>>>>> origin/Dhanesh
     if (!isPasswordValid) {
       throw ApiError.unauthorized('Invalid email or password. Please verify your credentials.');
     }
 
-<<<<<<< HEAD
-=======
-    // 5. Account status checks
->>>>>>> origin/Dhanesh
     if (user.status !== 'ACTIVE') {
       throw ApiError.forbidden(`Your account is currently ${user.status.toLowerCase()}. Access is restricted.`);
     }
 
-<<<<<<< HEAD
-=======
-    if (user.role === ROLES.DEALER && matchedDealer) {
-      if (matchedDealer.status === DEALER_STATUS.PENDING) {
-        throw ApiError.forbidden('Your dealer application is currently under review by GROVE Operations Desk. You will be notified via email upon KYC approval.');
-      }
-      if (matchedDealer.status === DEALER_STATUS.REJECTED) {
-        throw ApiError.forbidden('Your dealer application has been rejected. Please review previous communications or contact GROVE Support.');
-      }
-      if (matchedDealer.status === DEALER_STATUS.SUSPENDED) {
-        throw ApiError.forbidden('Your dealership account is currently suspended. Please contact platform operations.');
-      }
-    }
-
-    // 6. Generate Tokens
->>>>>>> origin/Dhanesh
     const tokenPayload = {
       id: user._id.toString(),
       email: user.email,
@@ -209,12 +147,7 @@ export class AuthService {
     const accessToken = generateAccessToken(tokenPayload);
     const refreshToken = generateRefreshToken(tokenPayload);
 
-<<<<<<< HEAD
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-=======
-    // 7. Store Refresh Token Hash in Database
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
->>>>>>> origin/Dhanesh
     await RefreshToken.create({
       tokenHash: hashToken(refreshToken),
       user: user._id,
@@ -223,7 +156,6 @@ export class AuthService {
       userAgent
     });
 
-<<<<<<< HEAD
     user.lastLogin = new Date();
     await user.save();
 
@@ -241,42 +173,6 @@ export class AuthService {
       accessToken,
       refreshToken,
       mustChangePassword: Boolean(user.mustChangePassword)
-=======
-    // 8. Update Last Login
-    user.lastLogin = new Date();
-    await user.save();
-
-    // 9. Format response payload
-    const userResponse = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      phone: user.phone,
-      avatar: user.avatar,
-      mustChangePassword: isTempPasswordLogin || user.mustChangePassword
-    };
-
-    const dealerResponse = matchedDealer
-      ? {
-          id: matchedDealer._id,
-          dealerCode: matchedDealer.dealerCode,
-          businessName: matchedDealer.businessName,
-          primaryCategory: matchedDealer.primaryCategory,
-          primaryCategoryName: matchedDealer.primaryCategoryName,
-          status: matchedDealer.status,
-          tier: matchedDealer.tier,
-          payoutHold: matchedDealer.payoutHold
-        }
-      : null;
-
-    return {
-      user: userResponse,
-      dealer: dealerResponse,
-      accessToken,
-      refreshToken,
-      mustChangePassword: isTempPasswordLogin || user.mustChangePassword
->>>>>>> origin/Dhanesh
     };
   }
 
@@ -367,7 +263,6 @@ export class AuthService {
       throw ApiError.unauthorized('Refresh token has expired. Please sign in again.');
     }
 
-<<<<<<< HEAD
     let tokenPayload;
     if (decoded.role === ROLES.DEALER) {
       const dealer = await Dealer.findById(decoded.id);
@@ -392,20 +287,6 @@ export class AuthService {
     }
 
     // Issue new Token Pair
-=======
-    const user = await User.findById(decoded.id);
-    if (!user || user.status !== 'ACTIVE') {
-      throw ApiError.unauthorized('User session is no longer active.');
-    }
-
-    // Issue new Token Pair
-    const tokenPayload = {
-      id: user._id.toString(),
-      email: user.email,
-      role: user.role
-    };
-
->>>>>>> origin/Dhanesh
     const newAccessToken = generateAccessToken(tokenPayload);
     const newRefreshToken = generateRefreshToken(tokenPayload);
     const newHash = hashToken(newRefreshToken);
@@ -418,11 +299,7 @@ export class AuthService {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await RefreshToken.create({
       tokenHash: newHash,
-<<<<<<< HEAD
       user: decoded.id,
-=======
-      user: user._id,
->>>>>>> origin/Dhanesh
       expiresAt,
       ipAddress,
       userAgent
@@ -448,7 +325,6 @@ export class AuthService {
   }
 
   /**
-<<<<<<< HEAD
    * First-Time Password Reset for Authenticated Dealer (using Bearer token)
    */
   static async setFirstTimePassword({ userId, newPassword }) {
@@ -507,29 +383,17 @@ export class AuthService {
   }
 
   /**
-=======
->>>>>>> origin/Dhanesh
    * First-Time Forced Dealer Password Setup (using 12-char temporary password)
    */
   static async setupInitialDealerPassword({ email, temporaryPassword, newPassword, ipAddress = '', userAgent = '' }) {
     const cleanEmail = email.toLowerCase().trim();
 
-<<<<<<< HEAD
     const dealer = await Dealer.findOne({ officialEmail: cleanEmail }).select('+password +temporaryPassword.hash');
     if (!dealer) {
       throw ApiError.notFound('Dealer account not found for this email address.');
     }
 
     if (!dealer.temporaryPassword?.hash) {
-=======
-    const user = await User.findOne({ email: cleanEmail });
-    if (!user || user.role !== ROLES.DEALER) {
-      throw ApiError.notFound('Dealer account not found for this email address.');
-    }
-
-    const dealer = await Dealer.findOne({ user: user._id }).select('+temporaryPassword.hash');
-    if (!dealer || !dealer.temporaryPassword?.hash) {
->>>>>>> origin/Dhanesh
       throw ApiError.badRequest('No active temporary password setup pending for this account.');
     }
 
@@ -548,14 +412,8 @@ export class AuthService {
     }
 
     // Set permanent password
-<<<<<<< HEAD
     dealer.password = newPassword;
     dealer.mustChangePassword = false;
-=======
-    user.password = newPassword;
-    user.mustChangePassword = false;
-    await user.save();
->>>>>>> origin/Dhanesh
 
     // Mark temporary password as used and invalidate
     dealer.temporaryPassword.isUsed = true;
@@ -565,15 +423,9 @@ export class AuthService {
 
     // Generate normal tokens
     const tokenPayload = {
-<<<<<<< HEAD
       id: dealer._id.toString(),
       email: dealer.officialEmail,
       role: ROLES.DEALER
-=======
-      id: user._id.toString(),
-      email: user.email,
-      role: user.role
->>>>>>> origin/Dhanesh
     };
 
     const accessToken = generateAccessToken(tokenPayload);
@@ -582,11 +434,7 @@ export class AuthService {
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await RefreshToken.create({
       tokenHash: hashToken(refreshToken),
-<<<<<<< HEAD
       user: dealer._id,
-=======
-      user: user._id,
->>>>>>> origin/Dhanesh
       expiresAt,
       ipAddress,
       userAgent
@@ -597,17 +445,10 @@ export class AuthService {
       accessToken,
       refreshToken,
       user: {
-<<<<<<< HEAD
         id: dealer._id,
         name: dealer.ownerName,
         email: dealer.officialEmail,
         role: ROLES.DEALER
-=======
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
->>>>>>> origin/Dhanesh
       },
       dealer: {
         id: dealer._id,
@@ -622,7 +463,6 @@ export class AuthService {
    * Regular Password Change for Authenticated User
    */
   static async changePassword({ userId, currentPassword, newPassword }) {
-<<<<<<< HEAD
     // 1. Check Dealer first
     const dealer = await Dealer.findById(userId).select('+password');
     if (dealer) {
@@ -640,8 +480,6 @@ export class AuthService {
     }
 
     // 2. Check User
-=======
->>>>>>> origin/Dhanesh
     const user = await User.findById(userId).select('+password');
     if (!user) {
       throw ApiError.notFound('User not found.');

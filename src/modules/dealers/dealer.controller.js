@@ -16,11 +16,7 @@ export const getProfile = asyncHandler(async (req, res) => {
 export const updateStoreSettings = asyncHandler(async (req, res) => {
   const dealerId = req.dealer.id;
   const result = await DealerService.updateStoreSettings(dealerId, req.body);
-<<<<<<< HEAD
   return res.status(200).json(ApiResponse.success({ ...result.storeSettings, dealer: result.dealer }, result.message));
-=======
-  return res.status(200).json(ApiResponse.success(result.storeSettings, result.message));
->>>>>>> origin/Dhanesh
 });
 
 export const getAllDealers = asyncHandler(async (req, res) => {
@@ -74,7 +70,6 @@ export const resetDealerCredentials = asyncHandler(async (req, res) => {
   return res.status(200).json(ApiResponse.success(result, result.message));
 });
 
-<<<<<<< HEAD
 export const submitOnboardingBankDetails = asyncHandler(async (req, res) => {
   const dealerId = req.user?.id || req.dealer?.id;
   const result = await DealerService.submitOnboardingBankDetails(dealerId, req.body);
@@ -87,5 +82,3 @@ export const verifyDealerKyc = asyncHandler(async (req, res) => {
   return res.status(200).json(ApiResponse.success(result.dealer, result.message));
 });
 
-=======
->>>>>>> origin/Dhanesh

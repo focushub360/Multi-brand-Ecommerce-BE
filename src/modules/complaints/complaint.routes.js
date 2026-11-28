@@ -8,12 +8,8 @@ import {
   createTicketSchema,
   replyTicketSchema,
   updateTicketStatusSchema,
-<<<<<<< HEAD
   adminReplySchema,
   reopenTicketSchema
-=======
-  adminReplySchema
->>>>>>> origin/Dhanesh
 } from './complaint.validation.js';
 
 const router = Router();
@@ -31,7 +27,6 @@ router.get('/', (req, res, next) => {
 });
 
 /**
-<<<<<<< HEAD
  * In-App Notifications (MUST BE REGISTERED BEFORE /:ticketId)
  */
 router.get('/dealer/notifications', complaintController.getDealerNotifications);
@@ -41,20 +36,13 @@ router.get('/customer/notifications', complaintController.getCustomerNotificatio
 router.patch('/customer/notifications/:id/read', complaintController.markCustomerNotificationRead);
 
 /**
-=======
->>>>>>> origin/Dhanesh
  * Customer & Dealer Ticket Operations
  */
 router.post('/', validate(createTicketSchema), complaintController.createTicket);
 router.get('/my-tickets', complaintController.getMyTickets);
-<<<<<<< HEAD
 router.post('/:ticketId/reopen', validate(reopenTicketSchema), complaintController.reopenTicket);
 router.post('/:ticketId/messages', validate(replyTicketSchema), complaintController.replyToTicket);
 router.get('/:ticketId', complaintController.getTicketById);
-=======
-router.get('/:ticketId', complaintController.getTicketById);
-router.post('/:ticketId/messages', validate(replyTicketSchema), complaintController.replyToTicket);
->>>>>>> origin/Dhanesh
 
 /**
  * Super Admin Ticket Governance Endpoints
@@ -80,7 +68,3 @@ router.post(
 );
 
 export default router;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/Dhanesh

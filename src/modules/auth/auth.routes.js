@@ -7,10 +7,7 @@ import {
   loginSchema,
   registerSchema,
   changePasswordSchema,
-<<<<<<< HEAD
   firstTimePasswordSchema,
-=======
->>>>>>> origin/Dhanesh
   initialSetupPasswordSchema
 } from './auth.validation.js';
 
@@ -67,7 +64,6 @@ router.get(
 );
 
 /**
-<<<<<<< HEAD
  * First-Time Password Setup for Authenticated Users (e.g. Approved Dealer first login)
  * POST /api/v1/auth/first-time-password
  */
@@ -79,8 +75,6 @@ router.post(
 );
 
 /**
-=======
->>>>>>> origin/Dhanesh
  * First-Time Temporary Password Setup for Approved Dealers
  * POST /api/v1/auth/dealer/initial-setup-password
  */

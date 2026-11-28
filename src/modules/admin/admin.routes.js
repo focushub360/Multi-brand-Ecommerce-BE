@@ -11,12 +11,8 @@ import {
   dealerRejectionSchema,
   adminDealerUpdateSchema,
   dealerStatusSchema,
-<<<<<<< HEAD
   dealerIdParamsSchema,
   dealerVerifyKycSchema
-=======
-  dealerIdParamsSchema
->>>>>>> origin/Dhanesh
 } from '../dealers/dealer.validation.js';
 import { updateSettingsSchema } from './admin.validation.js';
 
@@ -38,15 +34,12 @@ router.post(
   validate(dealerApprovalSchema),
   dealerController.approveDealer
 );
-<<<<<<< HEAD
 router.patch(
   '/dealers/:id/verify-kyc',
   validate(dealerIdParamsSchema),
   validate(dealerVerifyKycSchema),
   dealerController.verifyDealerKyc
 );
-=======
->>>>>>> origin/Dhanesh
 router.post(
   '/dealers/:id/reject',
   validate(dealerIdParamsSchema),
